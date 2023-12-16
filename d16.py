@@ -1,9 +1,5 @@
-#Doesn't acurrately check corners
-#(also is slow and badly written)
-
 In = open("d16input.txt").read().strip()
 G = [[c for c in row] for row in In.split("\n")]
-
 
 def move(c, d):
     return [sum(x) for x in zip(c, d)]
@@ -17,24 +13,10 @@ todo = []
 curr = [-1, -1]
         
 for t in range(4):
-    for i in range(0, len(G)):
-
-        if t == 0:
-            curr = [i, len(G)]
-            d = 3
-        elif t == 1:
-            curr = [i, -1]
-            d = 1
-        elif t == 2:
-            curr = [-1, i]
-            d = 2
-        elif t == 3:
-            curr = [len(G), i]
-            d = 0
-        
-        todo.append((curr, d))
-        
-
+    h = len(G)
+    for i in range(0, h):
+        curr = {0: [h, i], 1:[i,-1], 2:[-1, i], 3:[-1, i]}[t]
+        todo.append((curr, t))
         next = False
         v = set()
         nv = set()
@@ -51,14 +33,8 @@ for t in range(4):
                 
             if not str(curr)+str(d) in v:
                 v.add(str(curr)+str(d))
-                if d == 0:
-                    curr = move(curr, U)
-                elif d == 1:
-                    curr = move(curr, R)
-                elif d == 2:
-                    curr = move(curr, D)
-                elif d == 3:
-                    curr = move(curr, L)
+                pm = {0:U, 1:R, 2:D, 3:L}[d]
+                curr = move(curr, pm)
 
                 if curr[0] < 0 or curr[0] > len(G[0])-1:
                     pass
@@ -68,24 +44,10 @@ for t in range(4):
                     posc = G[curr[0]][curr[1]]
                     
                     if posc == "/":
-                        if d == 0:
-                            d = 1
-                        elif d == 1:
-                            d = 0
-                        elif d == 2:
-                            d = 3
-                        elif d == 3:
-                            d = 2
+                        d = {0:1, 1:0, 2:3, 3:2}[d]
                         todo.append((curr, d))
                     elif posc == "\\":
-                        if d == 0:
-                            d = 3
-                        elif d == 1:
-                            d = 2
-                        elif d == 2:
-                            d = 1
-                        elif d == 3:
-                            d = 0
+                        d = {0:3, 1:2, 2:1, 3:0}[d]
                         todo.append((curr, d))
                     elif posc == "-":
                         if d == 0 or d == 2:
@@ -101,5 +63,8 @@ for t in range(4):
                             todo.append((curr, d))
                     elif posc == ".":
                         todo.append((curr, d))
-
+        #p1
+        if t == 1 and i == 0:
+            print(len(nv)-1)
+#p2
 print(max)
